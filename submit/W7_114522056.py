@@ -12,30 +12,43 @@ from sklearn.model_selection import train_test_split
 def load_data(file_path):
     # TODO 1.1: 讀取 CSV
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
-    df = None
+    df = pd.read_csv("./data/titanic.csv")
     df.columns = [c.capitalize() for c in df.columns]
-    missing_count = None
+    missing_count = df.isnull().sum().sum()
     return df, int(missing_count)
 
 
 # 任務 2：處理缺失值
 def handle_missing(df):
     # TODO 2.1: 以 Age 中位數填補
+    age_median = df['Age'].median()
+    df['Age'].fillna(age_median, inplace=True)
+    
     # TODO 2.2: 以 Embarked 眾數填補
+    embarked_mode = df['Embarked'].mode()[0]
+    df['Embarked'].fillna(embarked_mode, inplace=True)
     return df
 
 
 # 任務 3：移除異常值
 def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
+    fare_mean = df['Fare'].mean()
+    fare_std = df['Fare'].std()
+    
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
+    # 建立一個條件來保留'正常'的資料
+    condition = df['Fare'] <= (fare_mean + 3 * fare_std)
+    df = df[condition]
     return df
 
 
 # 任務 4：類別變數編碼
 def encode_features(df):
     # TODO 4.1: 使用 pd.get_dummies 對 Sex、Embarked 進行編碼
-    df_encoded = None
+    # 我們需要刪除一些不再需要的欄位，如 Name, Ticket, Cabin, Passengerid
+    df_cleaned = df.drop(columns=['Name', 'Ticket', 'Cabin', 'Passengerid'], errors='ignore')
+    df_encoded = pd.get_dummies(df_cleaned, columns=['Sex', 'Embarked'], drop_first=True)
     return df_encoded
 
 
@@ -43,21 +56,32 @@ def encode_features(df):
 def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
-    df_scaled = None
+    # 建立一個 DataFrame 的副本以避免 SettingWithCopyWarning
+    df_scaled = df.copy()
+    # 選取要標準化的欄位
+    features_to_scale = ['Age', 'Fare']
+    # 進行擬合與轉換，並將結果指派回副本中
+    df_scaled[features_to_scale] = scaler.fit_transform(df[features_to_scale])
     return df_scaled
 
 
 # 任務 6：資料切割
 def split_data(df):
     # TODO 6.1: 將 Survived 作為 y，其餘為 X
+    X = df.drop('Survived', axis=1)
+    y = df['Survived']
+    
     # TODO 6.2: 使用 train_test_split 切割 (test_size=0.2, random_state=42)
-    X_train, X_test, y_train, y_test = None
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
     return X_train, X_test, y_train, y_test
 
 
 # 任務 7：輸出結果
 def save_data(df, output_path):
     # TODO 7.1: 將清理後資料輸出為 CSV (encoding='utf-8-sig')
+    df.to_csv(output_path, index=False, encoding='utf-8-sig')
     pass
 
 

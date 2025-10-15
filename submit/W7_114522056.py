@@ -48,7 +48,7 @@ def encode_features(df):
     # TODO 4.1: 使用 pd.get_dummies 對 Sex、Embarked 進行編碼
     # 我們需要刪除一些不再需要的欄位，如 Name, Ticket, Cabin, Passengerid
     df_cleaned = df.drop(columns=['Name', 'Ticket', 'Cabin', 'Passengerid'], errors='ignore')
-    df_encoded = pd.get_dummies(df_cleaned, columns=['Sex', 'Embarked'], drop_first=True)
+    df_encoded = pd.get_dummies(df_cleaned, columns=['Sex', 'Embarked'])
     return df_encoded
 
 

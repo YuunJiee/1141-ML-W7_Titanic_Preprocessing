@@ -32,14 +32,15 @@ def handle_missing(df):
 
 # 任務 3：移除異常值
 def remove_outliers(df):
-    # TODO 3.1: 計算 Fare 平均與標準差
-    fare_mean = df['Fare'].mean()
-    fare_std = df['Fare'].std()
-    
-    # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    # 建立一個條件來保留'正常'的資料
-    condition = df['Fare'] <= (fare_mean + 3 * fare_std)
-    df = df[condition]
+    # 重新計算直到無異常值
+    while True:
+        mean = df["Fare"].mean()
+        std = df["Fare"].std()
+        upper = mean + 3 * std
+        new_df = df[df["Fare"] <= upper]
+        if len(new_df) == len(df):
+            break
+        df = new_df
     return df
 
 

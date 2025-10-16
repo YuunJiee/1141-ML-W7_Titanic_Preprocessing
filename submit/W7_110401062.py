@@ -103,17 +103,15 @@ def save_data(df, output_path):
 
 # 主程式流程（請勿修改）
 if __name__ == "__main__":
-    DATA_PATH = "data/titanic.csv"
-    OUTPUT_PATH = "data/titanic_processed.csv"
+    input_path = "data/titanic.csv"
+    output_path = "data/titanic_processed.csv"
 
-    df, missing_count = load_data(DATA_PATH)
-    print(f"缺失值總數: {missing_count}")
-
+    df, missing_count = load_data(input_path)
     df = handle_missing(df)
     df = remove_outliers(df)
     df = encode_features(df)
     df = scale_features(df)
     X_train, X_test, y_train, y_test = split_data(df)
-    save_data(df, OUTPUT_PATH)
+    save_data(df, output_path)
 
     print("Titanic 資料前處理完成")

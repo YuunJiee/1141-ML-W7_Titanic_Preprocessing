@@ -33,7 +33,14 @@ def remove_outliers(df):
     fare_mean = df['Fare'].mean()
     fare_std = df['Fare'].std()
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    df = df[df['Fare'] <= fare_mean + 3 * fare_std]
+    while True:
+        fare_mean = df['Fare'].mean()
+        fare_std = df['Fare'].std()
+        threshold = fare_mean + 3 * fare_std
+        max_fare = df['Fare'].max()
+        if max_fare <= threshold:
+            break
+        df = df[df['Fare'] <= threshold]
     return df
 
 

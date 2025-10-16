@@ -35,7 +35,8 @@ def remove_outliers(df):
     print('Fare平均: ', fare_mean)
     print('Fare標準差: ', fare_std)
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    df = df[df['Fare'] <= fare_mean + 3 * fare_std].reset_index(drop=True)
+    upper_bound = fare_mean + 3 * fare_std
+    df = df[df['Fare'] <= upper_bound].reset_index(drop=True)
     return df
 
 
@@ -51,7 +52,7 @@ def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
     df[['Age', 'Fare']] = scaler.fit_transform(df[['Age', 'Fare']])
-    return df_scaled
+    return df
 
 
 # 任務 6：資料切割

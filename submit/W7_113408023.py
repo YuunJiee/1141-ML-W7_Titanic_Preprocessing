@@ -29,14 +29,27 @@ def handle_missing(df):
 
 # 任務 3：移除異常值
 def remove_outliers(df):
-    # [觀念補充] 雖然這次作業不能改函式參數，但未來可以設計成 remove_outliers(df, column, n_std)
-    # 這樣就可以對任何欄位移除 n 倍標準差外的異常值，增加程式碼的重複使用性。
-    fare_mean = df['Fare'].mean()
-    fare_std = df['Fare'].std()
-    
-    outlier_threshold = fare_mean + 3 * fare_std
-    df = df[df['Fare'] <= outlier_threshold]
-    
+    # [迴圈修正] 使用 while 迴圈迭代移除異常值
+    # 每次移除最極端的資料後，整體資料的平均值和標準差會改變，
+    # 因此需要重複計算，直到沒有異常值為止。
+    while True:
+        # 1. 計算當前 Fare 的平均與標準差
+        fare_mean = df['Fare'].mean()
+        fare_std = df['Fare'].std()
+        outlier_threshold = fare_mean + 3 * fare_std
+        
+        # 2. 找出目前存在的異常值 (Fare > 門檻)
+        # outliers_mask 是一個布林 Series，True 代表是異常值
+        outliers_mask = df['Fare'] > outlier_threshold
+        
+        # 3. 如果 outliers_mask 中沒有任何 True (即異常值數量為 0)，就跳出迴圈
+        if not outliers_mask.any():
+            break
+            
+        # 4. 如果還有異常值，則只保留非異常值的資料 (`~` 代表反轉布林值)
+        # 然後繼續下一輪迴圈，用更新後的 df 重新計算
+        df = df[~outliers_mask]
+        
     return df
 
 
@@ -97,3 +110,4 @@ if __name__ == "__main__":
     print(df.head())
     print(f"\n訓練集資料維度 (X_train): {X_train.shape}")
     print(f"測試集資料維度 (X_test): {X_test.shape}")
+

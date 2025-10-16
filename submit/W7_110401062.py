@@ -53,13 +53,23 @@ def remove_outliers(df):
 
 # 任務 4：類別變數編碼
 def encode_features(df):
-    # TODO 4.1: 使用 pd.get_dummies 對 Sex、Embarked 進行編碼
-    cols = [c for c in ['Sex', 'Embarked'] if c in df.columns]
-    if cols:
-        df_encoded = pd.get_dummies(df, columns=cols, drop_first=False)
-    else:
-        df_encoded = df.copy()
+    # 確保型別為字串，避免 get_dummies 不展開
+    if 'Sex' in df.columns:
+        df['Sex'] = df['Sex'].astype(str)
+    if 'Embarked' in df.columns:
+        df['Embarked'] = df['Embarked'].astype(str)
+
+    # 產生 One-hot（不要 drop_first）
+    df_encoded = pd.get_dummies(df, columns=['Sex', 'Embarked'], drop_first=False)
+
+    # 補齊測試期望的欄位（若該類別在這批資料中沒出現會缺欄，手動補 0）
+    must_have = ['Sex_female', 'Sex_male', 'Embarked_C', 'Embarked_Q', 'Embarked_S']
+    for col in must_have:
+        if col not in df_encoded.columns:
+            df_encoded[col] = 0
+
     return df_encoded
+
 
 
 # 任務 5：數值標準化

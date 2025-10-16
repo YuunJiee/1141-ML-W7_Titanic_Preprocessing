@@ -14,14 +14,14 @@ def load_data(file_path):
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
     df = pd.read_csv('/workspaces/1141-ML-W7_Titanic_Preprocessing/data/titanic.csv')
     df.columns = [c.capitalize() for c in df.columns]
-    missing_count = df.isnull().sum()
+    missing_count = df.isnull().sum().sum()
     return df, int(missing_count)
 
 
 # 任務 2：處理缺失值
 def handle_missing(df):
     # TODO 2.1: 以 Age 中位數填補
-    df['Age'] =  df['Age'].fillna(df['Age']. median())
+    df['Age'] =  df['Age'].fillna(df['Age'].median())
     # TODO 2.2: 以 Embarked 眾數填補
     df['Embarked'] =  df['Embarked'].fillna(df['Embarked'].mode()[0])
     return df
@@ -32,15 +32,29 @@ def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
     fare_mean = df['Fare'].mean()
     fare_std = df['Fare'].std()
-    # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    df = df[df['Fare'] <= fare_mean + 3*fare_std]
+
+    prev_len = -1   # 前一次的資料筆數
+    curr_len = len(df)  # 目前資料筆數
+
+    # 當資料筆數還會變化，就持續檢查
+    while curr_len != prev_len:
+        prev_len = curr_len  # 更新比較基準
+
+        fare_mean = df['Fare'].mean()
+        fare_std = df['Fare'].std()
+
+        # 移除超過 mean ± 3*std 的異常值
+        df = df[(df['Fare'] >= fare_mean - 3*fare_std) & 
+                (df['Fare'] <= fare_mean + 3*fare_std)]
+
+        curr_len = len(df)  # 重新計算目前筆數
     return df
 
 
 # 任務 4：類別變數編碼
 def encode_features(df):
     # TODO 4.1: 使用 pd.get_dummies 對 Sex、Embarked 進行編碼
-    df_encoded = pd.get_dummies(df[['Sex', 'Embarked']],drop_first=False)
+    df_encoded = pd.get_dummies(df, columns=['Sex', 'Embarked'], drop_first=False)
     return df_encoded
 
 
@@ -48,10 +62,8 @@ def encode_features(df):
 def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
-    df['Age'] = scaler.fit_transform(df[['Age']])
-    df['Fare'] = scaler.fit_transform(df[['Fare']])
-    df_scaled = scaler.fit_transform(df[['Age', 'Fare']])
-    return df_scaled
+    df[['Age', 'Fare']] = scaler.fit_transform(df[['Age', 'Fare']])
+    return df
 
 
 # 任務 6：資料切割
@@ -67,7 +79,7 @@ def split_data(df):
 # 任務 7：輸出結果
 def save_data(df, output_path):
     # TODO 7.1: 將清理後資料輸出為 CSV (encoding='utf-8-sig')
-    df.to_csv('data/titanic_processed.csv', index=False, encoding='utf-8-sig')
+    df.to_csv(output_path, index=False, encoding='utf-8-sig')
     pass
 
 

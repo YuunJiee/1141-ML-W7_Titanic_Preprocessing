@@ -11,7 +11,7 @@ def load_data(file_path):
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
     df = pd.read_csv("data/titanic.csv")
     df.columns = [c.capitalize() for c in df.columns]
-    missing_count = df.isnull().sum()[0]
+    missing_count = (df.isnull().sum()).sum()
     return df, int(missing_count)
 
 
@@ -29,13 +29,10 @@ def handle_missing(df):
 def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    mean = df["Fare"].std()
-    std = df["Fare"].mean()
+    mean = df["Fare"].mean()
+    std = df["Fare"].std()
     limit = mean + 3*std
-    outlier = df[df["Fare"]>limit]
-    for i in range(0,len(outlier)):
-        df = df.drop(outlier.index[i])
-    print('筆數:', len(df))
+    df = df[df["Fare"]<limit]
     
     return df
 
@@ -43,7 +40,10 @@ def remove_outliers(df):
 # 任務 4：類別變數編碼
 def encode_features(df):
     # TODO 4.1: 使用 pd.get_dummies 對 Sex、Embarked 進行編碼
-    df_encoded = pd.get_dummies(df[["Sex","Embarked"]])
+    df_change = pd.get_dummies(df[["Sex","Embarked"]])
+    df = pd.concat([df,df_change],axis=1)
+    df_encoded = df
+
     return df_encoded
 
 
@@ -51,7 +51,8 @@ def encode_features(df):
 def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
-    df_scaled = scaler.fit_transform(df[["Age","Fare"]])
+    df[["Age","Fare"]]=scaler.fit_transform(df[["Age","Fare"]])
+    df_scaled = df
 
     return df_scaled
 
@@ -60,7 +61,7 @@ def scale_features(df):
 def split_data(df):
     # TODO 6.1: 將 Survived 作為 y，其餘為 X
     # TODO 6.2: 使用 train_test_split 切割 (test_size=0.2, random_state=42)
-    X=df.drop(["Survived"],axis=1)
+    X=df.drop("Survived",axis=1)
     Y=df["Survived"]
     X_train, X_test, y_train, y_test = train_test_split(X,Y,test_size=0.2, random_state=42)
     return X_train, X_test, y_train, y_test
@@ -69,7 +70,7 @@ def split_data(df):
 # 任務 7：輸出結果
 def save_data(df, output_path):
     # TODO 7.1: 將清理後資料輸出為 CSV (encoding='utf-8-sig')
-    df.to_csv("data/titanic_processed.csv",encoding='utf-8-sig',index = True)
+    df.to_csv("data/titanic_processed.csv",encoding='utf-8-sig')
     pass
 
 

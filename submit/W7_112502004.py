@@ -52,8 +52,8 @@ def remove_outliers(df):
 def encode_features(df):
     # TODO 4.1: 使用 pd.get_dummies 對 Sex、Embarked 進行編碼
     df_encoded = pd.get_dummies(df[['Sex', 'Embarked']])
-    df = pd.concat([df, df_encoded], axis=1)
-    df_encoded = df
+    df = df.drop(columns=['Sex', 'Embarked'])
+    df_encoded = pd.concat([df, df_encoded], axis=1)
     return df_encoded
 
 

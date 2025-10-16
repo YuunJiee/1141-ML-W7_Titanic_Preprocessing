@@ -31,22 +31,22 @@ def handle_missing(df):
 
 
 # 任務 3：移除異常值
-def encode_features(df):
-    # 確保 Sex、Embarked 存在且是字串
-    if 'Sex' in df.columns:
-        df['Sex'] = df['Sex'].astype(str)
-    if 'Embarked' in df.columns:
-        df['Embarked'] = df['Embarked'].astype(str)
+def remove_outliers(df):
+    # 重複篩選，直到沒有新異常值被移除
+    if 'Fare' in df.columns:
+        df = df.copy()
+        df['Fare'] = pd.to_numeric(df['Fare'], errors='coerce')
 
-    # 使用 get_dummies，不要 drop_first
-    df_encoded = pd.get_dummies(df, columns=['Sex', 'Embarked'], drop_first=False)
-
-    # 若部分類別沒出現（例如某批資料沒有 'Q'），仍要補上空欄
-    for col in ['Sex_female', 'Sex_male', 'Embarked_C', 'Embarked_Q', 'Embarked_S']:
-        if col not in df_encoded.columns:
-            df_encoded[col] = 0
-
-    return df_encoded
+        prev_len = -1
+        # 當資料筆數持續變化（表示仍有異常值被移除）時，繼續迴圈
+        while prev_len != len(df):
+            prev_len = len(df)
+            fare_mean = df['Fare'].mean()
+            fare_std = df['Fare'].std()  # 樣本標準差 ddof=1
+            threshold = fare_mean + 3 * fare_std
+            df = df[df['Fare'] <= threshold].copy()
+            df.reset_index(drop=True, inplace=True)
+    return df
 
 
 

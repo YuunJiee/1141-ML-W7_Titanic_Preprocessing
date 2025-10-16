@@ -33,27 +33,13 @@ def handle_missing(df):
 
 # 任務 3：移除異常值
 def remove_outliers(df):
-    # 題目：移除 Fare > mean + 3*std
     if 'Fare' in df.columns:
-        # 1) 確保 Fare 為數值；避免 object/字串型別影響比較
-        fare = pd.to_numeric(df['Fare'], errors='coerce')
-
-        # 2) 用樣本標準差（pandas .std() 預設 ddof=1，這通常是測試期待）
-        fare_mean = fare.mean()
-        fare_std  = fare.std()
-
-        # 3) 設定門檻
+        fare_mean = df['Fare'].mean()
+        fare_std = df['Fare'].std()
         threshold = fare_mean + 3 * fare_std
-
-        # 4) 建立布林遮罩（用迴圈生成也行，但布林遮罩穩健且不受 index 影響）
-        keep_mask = []
-        for v in fare.to_numpy():
-            keep_mask.append(v <= threshold)
-
-        # 5) 回傳「已移除異常值」的副本
-        df = df[keep_mask].copy()
-
+        df = df[df['Fare'] <= threshold].copy()
     return df
+
 
 
 

@@ -10,11 +10,12 @@ from sklearn.model_selection import train_test_split
 
 # 任務 1：載入資料
 def load_data(file_path):
-    # TODO 1.1: 讀取 CSV
+    # TODO 1.1: 讀取 CSVs
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
     df = pd.read_csv(file_path)
     df.columns = [c.capitalize() for c in df.columns]
-    missing_count = df.isnull().sum().sum()
+    missing_count = df.isna().sum().sum()
+
     return df, int(missing_count)
 
 
@@ -49,8 +50,12 @@ def encode_features(df):
 def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
-      df[['Age', 'Fare']] = scaler.fit_transform(df[['Age', 'Fare']])
-    return df
+    df_scaled = df.copy()  # 建立副本以保留原始資料
+    to_scale = [c for c in ['Age', 'Fare'] if c in df_scaled.columns]
+    if to_scale:
+        df_scaled[to_scale] = scaler.fit_transform(df_scaled[to_scale])
+    return df_scaled
+
 
 
 # 任務 6：資料切割

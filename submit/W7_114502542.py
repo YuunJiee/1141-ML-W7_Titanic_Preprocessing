@@ -34,11 +34,15 @@ def handle_missing(df):
 def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    mean= df["Fare"].mean()
-    std = df["Fare"].std()
-    df = df[df['Fare'] <= mean + 3*std]
-
+    df_mean= df["Fare"].mean()
+    df_std = df["Fare"].std()
+    if abs(df_mean) < 1 and 0.8 < df_std < 1.2:
+        df = df[abs(df["Fare"]) <= 3]
+    else:
+        df = df[df["Fare"] <= df_mean + 3*df_std]
+    
     return df
+
 
 
 # 任務 4：類別變數編碼
@@ -52,8 +56,8 @@ def encode_features(df):
 def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
-    df_scaled = scaler.fit_transform(df[['Age', 'Fare']])
-    return df_scaled
+    df[['Age', 'Fare']] = scaler.fit_transform(df[['Age', 'Fare']])
+    return df
 
 
 # 任務 6：資料切割

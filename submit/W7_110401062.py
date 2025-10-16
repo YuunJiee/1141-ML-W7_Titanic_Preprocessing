@@ -35,20 +35,21 @@ def handle_missing(df):
 def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
     if 'Fare' in df.columns:
-        fare_mean = df['Fare'].mean()
-        fare_std = df['Fare'].std()
+        # 確保是數值，避免 dtype 變成 object 影響比較
+        fare_series = pd.to_numeric(df['Fare'], errors='coerce')
+        fare_mean = fare_series.mean()
+        fare_std = fare_series.std()  # pandas 預設 ddof=1（樣本標準差）
         threshold = fare_mean + 3 * fare_std
 
-        # TODO 3.2: 使用迴圈移除異常值
-        cleaned_rows = []
-        for i in range(len(df)):
-            fare_value = df.loc[i, 'Fare']
-            if fare_value <= threshold:
-                cleaned_rows.append(df.loc[i])  # 加入正常筆數
+        # TODO 3.2: 使用迴圈產生遮罩，移除 Fare > mean + 3*std
+        keep_mask = []
+        for val in fare_series.to_numpy():
+            keep_mask.append(val <= threshold)
 
-        df = pd.DataFrame(cleaned_rows).reset_index(drop=True)
+        df = df[keep_mask].copy()
 
     return df
+
 
 
 # 任務 4：類別變數編碼

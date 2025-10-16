@@ -30,15 +30,14 @@ def handle_missing(df):
 # 任務 3：移除異常值
 def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
-    # 先確保 Fare 沒有 NaN 值
-    df_clean = df.dropna(subset=["Fare"])
-    fare_mean = df_clean["Fare"].mean()
-    fare_std = df_clean["Fare"].std()
+    fare_mean = df["Fare"].mean()
+    fare_std = df["Fare"].std()
 
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    # 使用更嚴格的條件，同時處理可能的邊界情況
     upper_bound = fare_mean + 3 * fare_std
-    df_filtered = df[df["Fare"] <= upper_bound].copy()
+
+    # 確保正確過濾並返回副本
+    df_filtered = df[df["Fare"] <= upper_bound].reset_index(drop=True).copy()
 
     return df_filtered
 

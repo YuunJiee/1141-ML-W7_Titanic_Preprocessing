@@ -35,8 +35,22 @@ def remove_outliers(df):
     print('Fare平均: ', fare_mean)
     print('Fare標準差: ', fare_std)
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    upper_bound = fare_mean + 3 * fare_std
-    df = df[df['Fare'] <= upper_bound].reset_index(drop=True)
+    df = df.copy()
+    df['Fare'] = pd.to_numeric(df['Fare'], errors='coerce')
+    prev_len = len(df)
+
+    while True:
+        fare_mean = df['Fare'].mean()
+        fare_std = df['Fare'].std()
+
+        upper_bound = fare_mean + 3 * fare_std
+        df = df[df['Fare'] <= upper_bound].reset_index(drop=True)
+
+        if len(df) == prev_len:
+            break
+        else:
+            prev_len = len(df)
+
     return df
 
 

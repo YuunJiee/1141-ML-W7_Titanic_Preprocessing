@@ -11,17 +11,17 @@ from sklearn.model_selection import train_test_split
 # 任務 1：載入資料
 def load_data(file_path):
     # TODO 1.1: 讀取 CSV
-    df = pd.read_csv("data/titanic.csv")  # 讀取 Titanic 資料
-
+    df = pd.read_csv(file_path)
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
-    df.columns = [c.capitalize() for c in df.columns]  # 每個欄位首字母大寫
-    missing_count = df.isna().sum().sum()              # 計算所有欄位缺失值總數
+    df.columns = [c.capitalize() for c in df.columns]
+    missing_count = df.isna().sum().sum()
+    return df, int(missing_count)         # 計算所有欄位缺失值總數
 
 
 
 # 任務 2：處理缺失值
 def handle_missing(df):
-     # TODO 2.1: 以 Age 中位數填補
+    # TODO 2.1: 以 Age 中位數填補
     if 'Age' in df.columns:
         df['Age'] = df['Age'].fillna(df['Age'].median())
     # TODO 2.2: 以 Embarked 眾數填補
@@ -58,18 +58,17 @@ def encode_features(df):
 def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
-    cols = [c for c in ['Age', 'Fare'] if c in df.columns]
     df_scaled = df.copy()
+    cols = [c for c in ['Age', 'Fare'] if c in df_scaled.columns]
     if cols:
         df_scaled[cols] = scaler.fit_transform(df_scaled[cols])
     return df_scaled
-
 
 # 任務 6：資料切割
 def split_data(df):
     # TODO 6.1: 將 Survived 作為 y，其餘為 X
     if 'Survived' not in df.columns:
-        raise ValueError("DataFrame 缺少 'Survived' 欄位，無法切割資料。")
+        raise ValueError("缺少 'Survived' 欄位")
     y = df['Survived']
     X = df.drop(columns=['Survived'])
     # TODO 6.2: 使用 train_test_split 切割 (test_size=0.2, random_state=42)

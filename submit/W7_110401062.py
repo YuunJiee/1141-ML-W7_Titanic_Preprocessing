@@ -47,14 +47,23 @@ def remove_outliers(df):
 
 
 # 任務 4：類別變數編碼
-def encode_features(df):
-    # TODO 4.1: 使用 pd.get_dummies 對 Sex、Embarked 進行編碼
-    cols = [c for c in ['Sex', 'Embarked'] if c in df.columns]
-    if cols:
-        df_encoded = pd.get_dummies(df, columns=cols, drop_first=False)
-    else:
-        df_encoded = df.copy()
-    return df_encoded
+def remove_outliers(df):
+    # 重複篩選，直到沒有新異常值被移除
+    if 'Fare' in df.columns:
+        df = df.copy()
+        df['Fare'] = pd.to_numeric(df['Fare'], errors='coerce')
+
+        prev_len = -1
+        # 當資料筆數持續變化（表示仍有異常值被移除）時，繼續迴圈
+        while prev_len != len(df):
+            prev_len = len(df)
+            fare_mean = df['Fare'].mean()
+            fare_std = df['Fare'].std()  # 樣本標準差 ddof=1
+            threshold = fare_mean + 3 * fare_std
+            df = df[df['Fare'] <= threshold].copy()
+            df.reset_index(drop=True, inplace=True)
+    return df
+
 
 
 # 任務 5：數值標準化

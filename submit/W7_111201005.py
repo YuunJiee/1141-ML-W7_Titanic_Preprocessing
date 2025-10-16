@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 def load_data(file_path):
     # TODO 1.1: 讀取 CSV
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
-    df = pd.read_csv('/workspaces/1141-ML-W7_Titanic_Preprocessing/data/titanic.csv')
+    df = pd.read_csv(file_path)
     df.columns = [c.capitalize() for c in df.columns]
     missing_count = df.isnull().sum().sum()
     return df, int(missing_count)

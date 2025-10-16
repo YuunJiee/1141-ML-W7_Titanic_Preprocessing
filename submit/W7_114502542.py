@@ -36,7 +36,7 @@ def remove_outliers(df):
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
     mean= df["Fare"].mean()
     std = df["Fare"].std()
-    df = df[df['Fare'] <= mean + 3*std]
+    df['Fare'] = df['Fare'][df['Fare'] <= mean + 3*std]
 
     return df
 

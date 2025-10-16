@@ -14,7 +14,7 @@ def load_data(file_path):
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
     df = pd.read_csv('titanic.csv',encoding='utf-8-sig')
     df.columns = [c.capitalize() for c in df.columns]
-    missing_count = df.isnull().sum()
+    missing_count = df.isnull().sum().sum
     return df, int(missing_count)
 
 
@@ -51,7 +51,7 @@ def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
     df[['Age', 'Fare']] = scaler.fit_transform(df[['Age', 'Fare']])
-    df_scaled = df
+    df_scaled = df[['Age','Fare']]
     return df_scaled
 
 

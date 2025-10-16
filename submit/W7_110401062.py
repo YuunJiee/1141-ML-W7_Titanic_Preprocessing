@@ -36,11 +36,17 @@ def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
     if 'Fare' in df.columns:
         fare_mean = df['Fare'].mean()
-        fare_std = df['Fare'].std()  # pandas 的 std() 預設 ddof=1，為樣本標準差
+        fare_std = df['Fare'].std()
         threshold = fare_mean + 3 * fare_std
 
-        # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-        df = df[df['Fare'] <= threshold].copy()
+        # TODO 3.2: 使用迴圈移除異常值
+        cleaned_rows = []
+        for i in range(len(df)):
+            fare_value = df.loc[i, 'Fare']
+            if fare_value <= threshold:
+                cleaned_rows.append(df.loc[i])  # 加入正常筆數
+
+        df = pd.DataFrame(cleaned_rows).reset_index(drop=True)
 
     return df
 

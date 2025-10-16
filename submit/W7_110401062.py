@@ -15,8 +15,7 @@ def load_data(file_path):
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
     df.columns = [c.capitalize() for c in df.columns]
     missing_count = df.isna().sum().sum()
-    return df, int(missing_count)         # 計算所有欄位缺失值總數
-
+    return df, int(missing_count)
 
 
 # 任務 2：處理缺失值
@@ -33,14 +32,17 @@ def handle_missing(df):
 
 # 任務 3：移除異常值
 def remove_outliers(df):
+    # TODO 3.1: 計算 Fare 平均與標準差
     if 'Fare' in df.columns:
-        fare_mean = df['Fare'].mean()
-        fare_std = df['Fare'].std()
+        # 確保 Fare 為數值
+        fare = pd.to_numeric(df['Fare'], errors='coerce')
+        fare_mean = fare.mean()
+        fare_std = fare.std()  # pandas 樣本標準差 (ddof=1)
         threshold = fare_mean + 3 * fare_std
-        df = df[df['Fare'] <= threshold].copy()
+        # TODO 3.2: 移除 Fare > mean + 3*std 的資料
+        df = df[fare <= threshold].copy()
+        df.reset_index(drop=True, inplace=True)
     return df
-
-
 
 
 
@@ -83,7 +85,6 @@ def split_data(df):
 def save_data(df, output_path):
     # TODO 7.1: 將清理後資料輸出為 CSV (encoding='utf-8-sig')
     df.to_csv(output_path, index=False, encoding='utf-8-sig')
-
 
 # 主程式流程（請勿修改）
 if __name__ == "__main__":

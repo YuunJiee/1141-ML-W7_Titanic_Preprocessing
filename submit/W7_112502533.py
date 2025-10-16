@@ -21,25 +21,28 @@ def load_data(file_path):
 # 任務 2：處理缺失值
 def handle_missing(df):
     # TODO 2.1: 以 Age 中位數填補
-    df["Age"] = df["Age"].fillna(df["Age"].median())
+    df['Age'] = df['Age'].fillna(df['Age'].median())
     # TODO 2.2: 以 Embarked 眾數填補
-    df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
+    df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
     return df
 
 
 # 任務 3：移除異常值
 def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
-    fare_mean = df["Fare"].mean()
-    fare_std = df["Fare"].std()
-
+    fare_mean = df['Fare'].mean()
+    fare_std = df['Fare'].std()
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    upper_bound = fare_mean + 3 * fare_std
+    while True:
+        fare_mean = df['Fare'].mean()
+        fare_std = df['Fare'].std()
+        threshold = fare_mean + 3 * fare_std
+        max_fare = df['Fare'].max()
+        if max_fare <= threshold:
+            break
+        df = df[df['Fare'] <= threshold]
 
-    # 確保正確過濾並返回副本
-    df_filtered = df[df["Fare"] <= upper_bound].reset_index(drop=True).copy()
-
-    return df_filtered
+    return df
 
 
 # 任務 4：類別變數編碼

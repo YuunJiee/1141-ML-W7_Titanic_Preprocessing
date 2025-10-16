@@ -50,13 +50,21 @@ def remove_outliers(df):
     return df
     '''
     # TODO 3.1: 計算 Fare 平均與標準差
-    mean = df['Fare'].mean()
-    std = df['Fare'].std()
     # TODO 3.2: 移除 Fare > mean + 3*std
 
     #print('原筆數:', len(df)) #test
 
-    df = df[df['Fare'] < mean + std * 3]
+    previous_len = 0
+    current_len = len(df)
+    while previous_len != current_len:
+        previous_len = current_len
+
+        std = df['Fare'].std()
+        mean = df['Fare'].mean()
+
+        df = df[df['Fare'] < mean + std * 3]
+
+        current_len = len(df)
 
     return df
 
@@ -120,7 +128,7 @@ def save_data(df, output_path):
     pass
     '''
     # TODO 7.1: 將清理後資料輸出為 CSV (encoding='utf-8-sig')
-    df.to_csv('data/titanic_processed.csv', encoding='utf-8-sig')
+    df.to_csv(output_path, encoding='utf-8-sig', index = False)
     print('✅ 資料處理完成並已輸出至 data/titanic_processed.csv')
 
 

@@ -70,7 +70,7 @@ def split_data(df):
 # 任務 7：輸出結果
 def save_data(df, output_path):
     # TODO 7.1: 將清理後資料輸出為 CSV (encoding='utf-8-sig')
-    df.to_csv("data/titanic_processed.csv",encoding='utf-8-sig')
+    df.to_csv(output_path,encoding='utf-8-sig',index=False)
     pass
 
 

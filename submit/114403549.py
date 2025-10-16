@@ -31,8 +31,11 @@ def handle_missing(df):
 def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    desc = df['Fare'].describe()
-    df = df[df["Fare"] <= desc["mean"] + desc["std"]*3]
+    while True:
+        desc = df['Fare'].describe()
+        if len(df[df["Fare"] > desc["mean"] + desc["std"]*3]) == 0: break
+        df = df[df["Fare"] <= desc["mean"] + desc["std"]*3]
+ 
     return df
 
 
@@ -69,8 +72,7 @@ def split_data(df):
 # 任務 7：輸出結果
 def save_data(df, output_path):
     # TODO 7.1: 將清理後資料輸出為 CSV (encoding='utf-8-sig')
-    df.to_csv('data/titanic_processed.csv', encoding='utf-8-sig')
-    pass
+    df.to_csv(output_path, encoding='utf-8-sig')
 
 
 # 主程式流程（請勿修改）

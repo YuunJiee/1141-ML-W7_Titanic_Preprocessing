@@ -31,18 +31,27 @@ def handle_missing(df):
 # 任務 3：移除異常值
 def remove_outliers(df):
     # TODO 3.1: 計算 Fare 平均與標準差
-    fare_mean = df['Fare'].mean()
-    fare_std = df['Fare'].std()
     # TODO 3.2: 移除 Fare > mean + 3*std 的資料
-    threshold = fare_mean + 3 * fare_std
-    df = df[df['Fare'] <= threshold]
+    while True:
+        fare_series = pd.to_numeric(df['Fare'], errors='coerce')
+        mean = fare_series.mean()
+        std = fare_series.std()
+        threshold = mean + 3 * std
+        before = len(df)
+        df = df[fare_series <= threshold].copy()
+        if len(df) == before:
+            break
     return df
 
 
 # 任務 4：類別變數編碼
 def encode_features(df):
     # TODO 4.1: 使用 pd.get_dummies 對 Sex、Embarked 進行編碼
-    df_encoded = pd.get_dummies(df, columns=['Sex', 'Embarked'], drop_first=True)
+    cols = [c for c in ["Sex", "Embarked"] if c in df.columns]
+    if cols:
+        df_encoded = pd.get_dummies(df, columns=cols, drop_first=False, dtype=int)
+    else:
+        df_encoded = df.copy()
     return df_encoded
 
 
@@ -62,7 +71,7 @@ def scale_features(df):
 def split_data(df):
     # TODO 6.1: 將 Survived 作為 y，其餘為 X
     y = df['Survived']
-    X = df.drop('Survived', axis=1)
+    X = df.drop(columns=['Survived'])
     # TODO 6.2: 使用 train_test_split 切割 (test_size=0.2, random_state=42)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     return X_train, X_test, y_train, y_test

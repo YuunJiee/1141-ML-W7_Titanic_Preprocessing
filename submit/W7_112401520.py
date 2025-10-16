@@ -51,7 +51,6 @@ def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
     df[['Age', 'Fare']] = scaler.fit_transform(df[['Age', 'Fare']])
-    df_scaled = df[['Age','Fare']]
     return df_scaled
 
 
@@ -69,7 +68,6 @@ def split_data(df):
 def save_data(df, output_path):
     # TODO 7.1: 將清理後資料輸出為 CSV (encoding='utf-8-sig')
     df.to_csv(output_path, encoding='utf-8-sig', index=False)
-    pass
 
 
 # 主程式流程（請勿修改）

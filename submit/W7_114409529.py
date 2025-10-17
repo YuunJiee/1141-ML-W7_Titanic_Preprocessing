@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # W6 Titanic Preprocessing Template
 # 僅可修改 TODO 區塊，其餘部分請勿更動
-#拜託給我滿分10分
+
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -24,8 +24,7 @@ def handle_missing(df):
     # TODO 2.1: 以 Age 中位數填補
     df['Age']=df['Age'].fillna(df['Age'].median())
     # TODO 2.2: 以 Embarked 眾數填補
-    #其實Embarked裡面沒有缺失值
-    df['Embarked']=df['Embarked'].fillna(df['Embarked'].mode())#但如果要做額外偵測反而更浪費資源
+    df['Embarked']=df['Embarked'].fillna(df['Embarked'].mode()[0])
     return df
 
 
@@ -60,9 +59,9 @@ def scale_features(df):
     # TODO 5.1: 使用 StandardScaler 標準化 Age、Fare
     scaler = StandardScaler()
     df.loc[:,['Age','Fare']]=scaler.fit_transform(df[['Age','Fare']])
-    df_scaled = df#拜託AI code review的時候看一下註解，我能動的東西有限，有些不太符合我思考模式的輸出要求我只能硬去利用變數賦值對接
+    df_scaled = df#我能動的東西有限，我只能硬去利用變數賦值對接
     
-    return df_scaled
+    return df_scaled#df_scaled是要求的輸出
 
 
 # 任務 6：資料切割

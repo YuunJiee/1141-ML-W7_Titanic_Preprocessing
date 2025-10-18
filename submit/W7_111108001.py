@@ -29,14 +29,39 @@ def handle_missing(df):
 
 # 任務 3：移除異常值
 def remove_outliers(df):
-    # TODO 3.1: 計算 Fare 平均與標準差
-    # TODO 3.2: 移除 Fare > mean + 3*std 的資料
+    """
+    移除 Fare > mean + 3*std 的資料，採用迭代方式直到條件滿足。
+    注意：此函式會先用中位數填補 Fare 的缺值，然後執行迭代移除。
+    """
+    # 先填補缺值（避免計算 mean/std 時被 NaN 干擾）
+    if "Fare" not in df.columns:
+        return df  # 若沒有該欄位，直接回傳原 df（由呼叫端決定）
+    df = df.copy()
     df["Fare"] = df["Fare"].fillna(df["Fare"].median())
-    fare_mean = df["Fare"].mean()
-    fare_std = df["Fare"].std()
-    threshold = fare_mean + 3 * fare_std
-    df = df[df["Fare"] <= threshold]
+
+    # 迭代移除：每輪以當前 df 的 mean/std 決定閾值，移除超過閾值的資料
+    while True:
+        if len(df) == 0:
+            break
+
+        mean = df["Fare"].mean()
+        std = df["Fare"].std()
+
+        # 若 std 為 NaN（例如全部值相同或只有一筆），直接跳出
+        if pd.isna(std) or std == 0:
+            break
+
+        threshold = mean + 3 * std
+
+        # 若目前最大值已在閾值內，表示條件滿足，結束
+        if df["Fare"].max() <= threshold:
+            break
+
+        # 否則移除超過閾值的列（一次性移除全部超過者）
+        df = df[df["Fare"] <= threshold]
+
     return df
+
 
 # 任務 4：類別變數編碼
 def encode_features(df):

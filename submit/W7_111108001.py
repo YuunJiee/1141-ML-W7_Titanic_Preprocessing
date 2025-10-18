@@ -34,10 +34,9 @@ def remove_outliers(df):
     df["Fare"] = df["Fare"].fillna(df["Fare"].median())
     fare_mean = df["Fare"].mean()
     fare_std = df["Fare"].std()
-    Outlier = fare_mean+fare_std
-    df = df[df['Fare'] < fare_mean + 3 * fare_std]
+    threshold = fare_mean + 3 * fare_std
+    df = df[df["Fare"] <= threshold]
     return df
-
 
 # 任務 4：類別變數編碼
 def encode_features(df):

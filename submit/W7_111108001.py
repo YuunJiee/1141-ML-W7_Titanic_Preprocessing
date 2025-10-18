@@ -34,9 +34,8 @@ def remove_outliers(df):
     df["Fare"] = df["Fare"].fillna(df["Fare"].median())
     fare_mean = df["Fare"].mean()
     fare_std = df["Fare"].std()
-    df = df[df["Fare"] <= fare_mean + 3*fare_std]
-    df = df[df["Fare"] >= 0]  # 移除負數（如果有）
-    df.reset_index(drop=True, inplace=True)
+    Outlier = fare_mean+fare_std
+    df["Fare"] = [(df['Fare'])<Outlier]
     return df
 
 

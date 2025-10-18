@@ -11,8 +11,8 @@ from sklearn.model_selection import train_test_split
 # 任務 1：載入資料
 def load_data(file_path):
     # TODO 1.1: 讀取 CSV
+    df = pd.read_csv(file_path,encoding='utf-8-sig',na_value=['',' ','N/A','?'])
     # TODO 1.2: 統一欄位首字母大寫，並計算缺失值數量
-    df = pd.read_csv(file_path, encoding='utf-8-sig')
     df.columns = [c.capitalize() for c in df.columns]
     missing_count = df.isnull().sum().sum()
     return df, int(missing_count)
@@ -42,7 +42,7 @@ def remove_outliers(df):
         Farestd=df["Fare"].std()
         threshold=Faremean+3*Farestd
         df=df[df["Fare"]<=threshold]
-        if len(df==current_len):
+        if len(df)==current_len:
             break
     return df
 return df
